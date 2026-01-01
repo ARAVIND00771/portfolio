@@ -1,5 +1,6 @@
 {
   "name": "aravind-portfolio",
+  "description": "Portfolio website for Kasoju Aravind - Full-Stack & App Developer",
   "private": true,
   "version": "0.0.0",
   "type": "module",

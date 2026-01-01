@@ -106,12 +106,12 @@ export const ProjectsSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [selectedProject, setSelectedProject] = useState<typeof featuredProjects[0] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<(typeof featuredProjects[0] | typeof otherProjects[0]) | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Auto-play video when project is selected
   useEffect(() => {
-    if (selectedProject && videoRef.current && selectedProject.video) {
+    if (selectedProject && videoRef.current && 'video' in selectedProject && selectedProject.video) {
       videoRef.current.play().catch((error) => {
         console.log('Video autoplay prevented:', error);
       });
@@ -157,13 +157,7 @@ export const ProjectsSection = () => {
               }}
               onMouseEnter={() => setHoveredId(project.id)}
               onMouseLeave={() => setHoveredId(null)}
-              onClick={() => {
-                if (project.github) {
-                  window.open(project.github, '_blank', 'noopener,noreferrer');
-                } else {
-                  setSelectedProject(project);
-                }
-              }}
+              onClick={() => setSelectedProject(project)}
               whileHover={{ 
                 y: -12,
                 rotateX: -3,
@@ -234,7 +228,7 @@ export const ProjectsSection = () => {
                   </div>
                 </motion.div>
 
-                {/* Action buttons */}
+                {/* Action button */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{
@@ -242,21 +236,8 @@ export const ProjectsSection = () => {
                     y: hoveredId === project.id ? 0 : 20,
                   }}
                   transition={{ duration: 0.3, delay: 0.1 }}
-                  className="absolute top-6 right-6 flex gap-3 z-10"
+                  className="absolute top-6 right-6 z-10"
                 >
-                  {project.github && (
-                    <motion.a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="p-3 rounded-full bg-card/90 backdrop-blur-md border border-primary/30 hover:border-primary hover:bg-primary/20 transition-all duration-300 shadow-glow-sm"
-                    >
-                      <Github size={18} className="text-primary" />
-                    </motion.a>
-                  )}
                   <motion.button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -265,6 +246,7 @@ export const ProjectsSection = () => {
                     whileHover={{ scale: 1.1, rotate: -5 }}
                     whileTap={{ scale: 0.9 }}
                     className="p-3 rounded-full bg-card/90 backdrop-blur-md border border-border hover:border-primary hover:bg-primary/20 transition-all duration-300 shadow-glow-sm"
+                    aria-label="View project details"
                   >
                     <ExternalLink size={18} />
                   </motion.button>
@@ -304,11 +286,7 @@ export const ProjectsSection = () => {
                 }}
                 onMouseEnter={() => setHoveredId(project.id)}
                 onMouseLeave={() => setHoveredId(null)}
-                onClick={() => {
-                  if (project.github) {
-                    window.open(project.github, '_blank', 'noopener,noreferrer');
-                  }
-                }}
+                onClick={() => setSelectedProject(project)}
                 whileHover={{ 
                   y: -8,
                   rotateX: -2,
@@ -399,10 +377,12 @@ export const ProjectsSection = () => {
                     <DialogTitle className="text-3xl font-bold">
                       {selectedProject.title}
                     </DialogTitle>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar size={16} />
-                      <span>{selectedProject.time}</span>
-                    </div>
+                    {'time' in selectedProject && selectedProject.time && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar size={16} />
+                        <span>{selectedProject.time}</span>
+                      </div>
+                    )}
                   </div>
                 </DialogHeader>
                 
@@ -412,9 +392,11 @@ export const ProjectsSection = () => {
 
                 {/* Project Video/Image */}
                 <div className={`relative w-full rounded-xl overflow-hidden ${
-                  selectedProject.id === 1 ? 'aspect-[9/16] max-w-sm mx-auto' : 'aspect-video'
+                  'video' in selectedProject && selectedProject.video && selectedProject.id === 1 
+                    ? 'aspect-[9/16] max-w-sm mx-auto' 
+                    : 'aspect-video'
                 }`}>
-                  {selectedProject.video ? (
+                  {'video' in selectedProject && selectedProject.video ? (
                     <video
                       key={selectedProject.id}
                       ref={videoRef}
@@ -441,26 +423,28 @@ export const ProjectsSection = () => {
                 </div>
 
                 {/* Key Highlights */}
-                <div className="space-y-3">
-                  <h4 className="text-lg font-semibold flex items-center gap-2">
-                    <Code size={20} className="text-primary" />
-                    Key Work
-                  </h4>
-                  <ul className="space-y-2">
-                    {selectedProject.highlights.map((highlight, index) => (
-                      <motion.li
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                        className="flex items-start gap-3 text-muted-foreground"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <span>{highlight}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
+                {'highlights' in selectedProject && selectedProject.highlights && selectedProject.highlights.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="text-lg font-semibold flex items-center gap-2">
+                      <Code size={20} className="text-primary" />
+                      Key Work
+                    </h4>
+                    <ul className="space-y-2">
+                      {selectedProject.highlights.map((highlight, index) => (
+                        <motion.li
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          className="flex items-start gap-3 text-muted-foreground"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                          <span>{highlight}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {/* Tech Stack */}
                 <div className="space-y-3">

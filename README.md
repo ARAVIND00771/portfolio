@@ -50,7 +50,7 @@ A modern, interactive portfolio website showcasing my work as a developer. Built
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/aravind00771/aravind_portfolio.git
 cd aravind_portfolio
 ```
 
