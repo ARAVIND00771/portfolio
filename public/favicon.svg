@@ -5,7 +5,6 @@
       <stop offset="100%" style="stop-color:#B347E5;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <rect width="100" height="100" fill="#0a0a0f"/>
   <text x="50" y="70" font-family="Outfit, sans-serif" font-size="60" font-weight="900" text-anchor="middle" fill="url(#kaGradient)">KA</text>
 </svg>
 
