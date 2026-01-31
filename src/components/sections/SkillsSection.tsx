@@ -3,12 +3,12 @@ import { useRef } from 'react';
 import { AnimatedLine } from '../ui/AnimatedText';
 
 const skills = [
-  { name: 'React.js', level: 85, color: 'from-primary to-secondary' },
-  { name: 'React Native', level: 80, color: 'from-secondary to-accent' },
+  { name: 'React.js', level: 70, color: 'from-primary to-secondary' },
+  { name: 'React Native', level: 70, color: 'from-secondary to-accent' },
   { name: 'Python', level: 90, color: 'from-primary to-accent' },
-  { name: 'Java', level: 70, color: 'from-accent to-primary' },
+  { name: 'Java', level: 85, color: 'from-accent to-primary' },
   { name: 'Firebase', level: 80, color: 'from-secondary to-primary' },
-  { name: 'SQL / Oracle', level: 75, color: 'from-primary to-secondary' },
+  { name: 'SQL / Oracle', level: 95, color: 'from-primary to-secondary' },
 ];
 
 const programmingLanguages = [
